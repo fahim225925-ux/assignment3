@@ -35,34 +35,24 @@ const employeeSchema = new mongoose.Schema({
 const Employee = mongoose.model('Employee', employeeSchema);
 
 // ==========================================
-// API ENDPOINTS (Assignment Requirements)
+// API ENDPOINTS (Supporting both route variations)
 // ==========================================
 
-// 1. GET: Retrieve all employee information from the database
-app.get('/api/employees', async (req, res) => {
+// GET: Retrieve all employees
+const getAllEmployees = async (req, res) => {
     try {
         const employees = await Employee.find();
         res.status(200).json(employees);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-});
+};
 
-// 2. GET: Retrieve a single employee information by ID[cite: 1]
-app.get('/api/employees/:id', async (req, res) => {
-    try {
-        const employee = await Employee.findById(req.params.id);
-        if (!employee) {
-            return res.status(404).json({ message: 'Employee not found' });
-        }
-        res.status(200).json(employee);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
+app.get('/api/employees', getAllEmployees);
+app.get('/api/employeelist', getAllEmployees);
 
-// 3. POST: Add new employee to database[cite: 1]
-app.post('/api/employees', async (req, res) => {
+// POST: Add new employee
+const addEmployee = async (req, res) => {
     try {
         const newEmployee = new Employee({
             name: req.body.name,
@@ -75,10 +65,13 @@ app.post('/api/employees', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-});
+};
 
-// 4. PUT: Update information of the employee[cite: 1]
-app.put('/api/employees/:id', async (req, res) => {
+app.post('/api/employees', addEmployee);
+app.post('/api/employeelist', addEmployee);
+
+// PUT: Update employee
+const updateEmployee = async (req, res) => {
     try {
         const updatedEmployee = await Employee.findByIdAndUpdate(
             req.params.id,
@@ -92,10 +85,13 @@ app.put('/api/employees/:id', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-});
+};
 
-// 5. DELETE: Delete a single employee from database[cite: 1]
-app.delete('/api/employees/:id', async (req, res) => {
+app.put('/api/employees/:id', updateEmployee);
+app.put('/api/employeelist/:id', updateEmployee);
+
+// DELETE: Delete employee
+const deleteEmployee = async (req, res) => {
     try {
         const deletedEmployee = await Employee.findByIdAndDelete(req.params.id);
         if (!deletedEmployee) {
@@ -105,7 +101,10 @@ app.delete('/api/employees/:id', async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-});
+};
+
+app.delete('/api/employees/:id', deleteEmployee);
+app.delete('/api/employeelist/:id', deleteEmployee);
 
 // ==========================================
 // START SERVER
